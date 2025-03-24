@@ -1,0 +1,39 @@
+<!-- public/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD Operations</title>
+</head>
+<body>
+  <h2>Add User</h2>
+  <form id="createForm">
+    <input type="text" id="createName" placeholder="Name" required />
+    <input type="number" id="createAge" placeholder="Age" required />
+    <button type="submit">Create User</button>
+  </form>
+
+  <h2>Update User</h2>
+  <!-- For updating, provide the MongoDB _id -->
+  <form id="updateForm">
+    <input type="text" id="updateId" placeholder="User ID" required />
+    <input type="text" id="updateName" placeholder="New Name" />
+    <input type="number" id="updateAge" placeholder="New Age" />
+    <button type="submit">Update User</button>
+  </form>
+
+  <h2>Delete User</h2>
+  <form id="deleteForm">
+    <input type="text" id="deleteId" placeholder="User ID" required />
+    <button type="submit">Delete User</button>
+  </form>
+
+  <h2>All Users</h2>
+  <button id="readBtn">Refresh Users</button>
+  <ul id="userList"></ul>
+
+  <p id="message"></p>
+
+  <script src="index.js"></script>
+</body>
+</html>
