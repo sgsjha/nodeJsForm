@@ -1,58 +1,50 @@
 // server.js
-const http = require('http');
 const path = require('path');
 const { withDb } = require('./db');
 const { serveStaticFile } = require('./utils/static');
 const { createUser, readUsers, updateUser, deleteUser } = require('./routes/crud');
 
-const PORT = 3000;
-
-const server = http.createServer((req, res) => {
+// Export a function (req, res) that Vercel will use as a serverless function.
+module.exports = async (req, res) => {
   const { method, url } = req;
   
-  // Serve static files from the public folder
+  // Serve static files for the home page and index.js
   if (method === 'GET' && url === '/') {
     const filepath = path.join(__dirname, 'public', 'index.html');
-    serveStaticFile(res, filepath, 'text/html');
+    return serveStaticFile(res, filepath, 'text/html');
   } else if (method === 'GET' && url === '/index.js') {
     const filepath = path.join(__dirname, 'public', 'index.js');
-    serveStaticFile(res, filepath, 'application/javascript');
+    return serveStaticFile(res, filepath, 'application/javascript');
   }
-  // Create user
+  // Create user endpoint
   else if (method === 'POST' && url === '/create') {
-    withDb(db => createUser(req, res, db)).catch(err => {
-      res.writeHead(500, {'Content-Type': 'application/json'});
+    return withDb(db => createUser(req, res, db)).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Database error', error: err.toString() }));
     });
   }
-  // Read users
+  // Read users endpoint
   else if (method === 'GET' && url === '/read') {
-    withDb(db => readUsers(req, res, db)).catch(err => {
-      res.writeHead(500, {'Content-Type': 'application/json'});
+    return withDb(db => readUsers(req, res, db)).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Database error', error: err.toString() }));
     });
   }
-  // Update user
+  // Update user endpoint
   else if (method === 'PUT' && url === '/update') {
-    withDb(db => updateUser(req, res, db)).catch(err => {
-      res.writeHead(500, {'Content-Type': 'application/json'});
+    return withDb(db => updateUser(req, res, db)).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Database error', error: err.toString() }));
     });
   }
-  // Delete user
+  // Delete user endpoint
   else if (method === 'DELETE' && url === '/delete') {
-    withDb(db => deleteUser(req, res, db)).catch(err => {
-      res.writeHead(500, {'Content-Type': 'application/json'});
+    return withDb(db => deleteUser(req, res, db)).catch(err => {
+      res.writeHead(500, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ message: 'Database error', error: err.toString() }));
     });
+  } else {
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    return res.end('Not Found');
   }
-  // Unknown route
-  else {
-    res.writeHead(404, {'Content-Type': 'text/plain'});
-    res.end('Not Found');
-  }
-});
-
-server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`); // we will put sm else here
-});
+};
